@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #101822;
+            color: #a60d0d;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .login-box {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Demo note styles */
+        .demo-note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .demo-credentials {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #28a0ff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a0ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: #1e7fb8;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: center;
+            min-height: 15px;
+        }
+
+        .success-message {
+            color: #00C851;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: center;
+            min-height: 15px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: #28a0ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .forgot-password a {
+            color: #666;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            color: #28a0ff;
+            text-decoration: underline;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .remember-me label {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Login</h2>
+
+        <!-- Demo credentials note -->
+        <div class="demo-note">
+            Demo Account Credentials:<br>
+            Email: <span class="demo-credentials">hammsr2@gmail.com</span><br>
+            Password: <span class="demo-credentials">18112005</span>
+        </div>
+
+        <form id="login-form">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required autocomplete="email">
+                <div class="error-message" id="email-error"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required autocomplete="current-password">
+                <div class="error-message" id="password-error"></div>
+                <div class="forgot-password">
+                    <a href="/forgot-password">Forgot Password?</a>
+                </div>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Remember me</label>
+            </div>
+
+            <button type="submit">Login</button>
+            <div class="error-message" id="login-error"></div>
+            <div class="success-message" id="login-success"></div>
+        </form>
+
+        <div class="signup-link">
+            Don't have an account? <a href="/signup">Sign Up</a>
+        </div>
+    </div>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const loginError = document.getElementById('login-error');
+        const loginSuccess = document.getElementById('login-success');
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+
+        // Clear previous error messages
+        loginError.textContent = '';
+        loginSuccess.textContent = '';
+        emailError.textContent = '';
+        passwordError.textContent = '';
+
+        // Validate email
+        if (!email) {
+            emailError.textContent = 'Please enter your email';
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = 'Please enter a valid email address';
+            return;
+        }
+
+        // Validate password
+        if (!password) {
+            passwordError.textContent = 'Please enter your password';
+            return;
+        }
+
+        // Check for demo account
+        if (email === 'hammsr2@gmail.com' && password === '18112005') {
+            loginSuccess.textContent = 'Login successful! Redirecting to wallet...';
+            
+            // Store remember me preference
+            if (document.getElementById('remember').checked) {
+                localStorage.setItem('rememberedEmail', email);
+                localStorage.setItem('userEmail', email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+
+            // Redirect to wallet.html directly for demo account
+            setTimeout(() => {
+                window.location.href = 'wallet.html';
+            }, 1500);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                loginSuccess.textContent = 'Login successful! Redirecting to wallet...';
+                
+                // Store remember me preference
+                if (document.getElementById('remember').checked) {
+                    localStorage.setItem('rememberedEmail', email);
+                    localStorage.setItem('userEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+
+                // Redirect to wallet.html after successful login
+                setTimeout(() => {
+                    window.location.href = 'wallet.html';
+                }, 1500);
+            } else {
+                loginError.textContent = data.message || 'Invalid email or password';
+            }
+        } catch (error) {
+            loginError.textContent = 'Error connecting to server. Please try again.';
+        }
+    });
+
+    // Load remembered email if exists
+    window.addEventListener('DOMContentLoaded', () => {
+        const rememberedEmail = localStorage.getItem('rememberedEmail');
+        if (rememberedEmail) {
+            document.getElementById('email').value = rememberedEmail;
+            document.getElementById('remember').checked = true;
+        }
+    });
+</script>
+</body>
+</html>

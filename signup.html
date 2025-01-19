@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #101822;
+            color: #a60d0d;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .login-box {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a0ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1e7fb8;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #00C851;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .weak { 
+            color: #ff4444; 
+            background-color: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+        }
+
+        .medium { 
+            color: #ffbb33; 
+            background-color: rgba(255, 187, 51, 0.1);
+            border: 1px solid #ffbb33;
+        }
+
+        .strong { 
+            color: #00C851; 
+            background-color: rgba(0, 200, 81, 0.1);
+            border: 1px solid #00C851;
+        }
+
+        .otp-section {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ccc;
+        }
+
+        #signup-btn {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .timer {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #28a0ff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <div class="error-message" id="email-error"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <div id="password-strength" class="password-strength"></div>
+                <div class="error-message" id="password-error"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" required>
+                <div class="error-message" id="confirm-password-error"></div>
+            </div>
+            <div id="email-error" class="error-message"></div>
+
+            <button type="button" id="send-otp-btn">Send OTP</button>
+            
+            <div id="otp-section" class="otp-section">
+                <div class="input-group">
+                    <label for="otp">Enter OTP:</label>
+                    <input type="text" id="otp" maxlength="6" pattern="\d{6}">
+                    <div class="error-message" id="otp-error"></div>
+                    <div class="timer" id="timer"></div>
+                </div>
+                <button type="button" id="verify-otp-btn">Verify OTP</button>
+                <button type="button" id="resend-otp-btn" style="display: none;">Resend OTP</button>
+            </div>
+
+            <button type="submit" id="signup-btn">Sign Up</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="/login.html">Login</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+    </script>
+    <script src="signup.js"></script>
+</body>
+</html>

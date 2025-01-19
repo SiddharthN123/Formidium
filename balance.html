@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Balance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #101822;
+            color: #fff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 0 auto;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 100px;
+            padding: 20px;
+        }
+
+        .balance-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .title {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0d6efd;
+            margin: 1.5rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .address-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 1.5rem 0;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        .back-button {
+            margin-top: 1.5rem;
+            padding: 10px 30px;
+            font-size: 1.1rem;
+        }
+
+        img {
+            height: 50px;
+            width: auto;
+        }
+
+        .error-text {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .warning-text {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .network-badge {
+            background: rgba(13, 110, 253, 0.2);
+            color: #0d6efd;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="logo.png" alt="Alchemist Logo">
+        <span class="logo-text">The Alchemist</span>
+    </div>
+
+    <div class="main-content">
+        <div class="balance-card">
+            <h2 class="title">Current Balance</h2>
+            
+            <div class="address-display" id="walletAddress">
+                <div class="spinner-container">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="balance-amount" id="walletBalance">
+                <div class="spinner-container">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="networkDisplay" class="network-badge"></div>
+
+            <button onclick="location.href='existing.html'" class="btn btn-primary back-button">
+                Back to Wallet
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script>
+        let web3;
+
+        const networks = {
+            1: 'Ethereum Mainnet',
+            3: 'Ropsten Testnet',
+            4: 'Rinkeby Testnet',
+            5: 'Goerli Testnet',
+            42: 'Kovan Testnet'
+        };
+
+        async function initWeb3AndShowBalance() {
+            try {
+                // Check if MetaMask is installed
+                if (typeof window.ethereum === 'undefined') {
+                    throw new Error('MetaMask is not installed');
+                }
+
+                // Request account access
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                web3 = new Web3(window.ethereum);
+                
+                // Check network
+                const networkId = await web3.eth.net.getId();
+                const networkName = networks[networkId] || `Network ${networkId}`;
+                document.getElementById('networkDisplay').textContent = networkName;
+                
+                // Get accounts
+                const accounts = await web3.eth.getAccounts();
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts found');
+                }
+                
+                const address = accounts[0];
+                document.getElementById('walletAddress').textContent = address;
+                
+                // Get and display balance
+                const balance = await web3.eth.getBalance(address);
+                const ethBalance = web3.utils.fromWei(balance, 'ether');
+                document.getElementById('walletBalance').textContent = 
+                    `${parseFloat(ethBalance).toFixed(4)} ETH`;
+
+            } catch (error) {
+                const errorMessage = error.message || 'An unknown error occurred';
+                document.getElementById('walletAddress').innerHTML = 
+                    `<span class="error-text">Error: ${errorMessage}</span>`;
+                document.getElementById('walletBalance').innerHTML = 
+                    `<span class="warning-text">Please check MetaMask</span>`;
+                document.getElementById('networkDisplay').textContent = 'Not Connected';
+                console.error('Error:', error);
+            }
+        }
+
+        // Event Listeners
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                initWeb3AndShowBalance();
+            });
+
+            window.ethereum.on('chainChanged', function (chainId) {
+                window.location.reload();
+            });
+
+            window.ethereum.on('disconnect', function (error) {
+                document.getElementById('walletAddress').innerHTML = 
+                    '<span class="error-text">Wallet disconnected</span>';
+                document.getElementById('walletBalance').innerHTML = 
+                    '<span class="warning-text">Please reconnect MetaMask</span>';
+                document.getElementById('networkDisplay').textContent = 'Disconnected';
+            });
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initWeb3AndShowBalance);
+    </script>
+</body>
+</html>

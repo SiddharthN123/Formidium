@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="transaction.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cross-Border Payment Platform</h1>
+
+        <!-- Button to View Transactions -->
+        <button id="viewTransactionsBtn">View Recent Transactions</button>
+
+        <!-- Public Key Input -->
+        <div id="publicKeyInputSection" class="input-section" style="display: none;">
+            <label for="publicKey">Enter Ethereum Public Key:</label>
+            <input type="text" id="publicKey" placeholder="Enter Public Key">
+            <button id="submitPublicKey">Submit</button>
+        </div>
+
+        <!-- Transaction History Table -->
+        <div id="transactionTableSection" class="table-section" style="display: none;">
+            <h2>Recent Transactions</h2>
+            <table id="transactionTable">
+                <thead>
+                    <tr>
+                        <th>Tx Hash</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount (ETH)</th>
+                        <th>Status</th>
+                        <th>Date/Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Transaction Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="transaction.js"></script>
+</body>
+</html>

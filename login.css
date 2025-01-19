@@ -1,0 +1,26 @@
+body {
+    background-color: #101822; /* Dark background */
+    color: #a60d0d; /* Default text color */
+    font-family: 'Arial', sans-serif;
+  }
+  
+  h1, h2, h3 {
+    color: #00FFC3; /* Teal accent for headings */
+  }
+  
+  p {
+    color: #222b3b; /* Slightly lighter color for secondary text */
+  }
+  
+  .button {
+    background-color: #00D1B2; /* Button color in teal/cyan */
+    color: #171212;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #00FFC3; /* Brighter on hover */
+  }
+  

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup & Login with Aadhaar OTP</title>
+</head>
+<body>
+
+<h2>Signup Form</h2>
+<form id="signup-form">
+    <label for="aadhaar">Aadhaar: </label>
+    <input type="text" id="aadhaar" required><br>
+    
+    <label for="full-name">Full Name: </label>
+    <input type="text" id="full-name" required><br>
+    
+    <label for="email">Email: </label>
+    <input type="email" id="email" required><br>
+    
+    <label for="phone">Phone: </label>
+    <input type="text" id="phone"><br>
+    
+    <label for="address">Address: </label>
+    <input type="text" id="address"><br>
+    
+    <label for="country">Country: </label>
+    <input type="text" id="country"><br>
+    
+    <label for="password">Password: </label>
+    <input type="password" id="password" required><br>
+    
+    <label for="confirm-password">Confirm Password: </label>
+    <input type="password" id="confirm-password" required><br>
+    
+    <label for="profile-picture">Profile Picture: </label>
+    <input type="file" id="profile-picture"><br>
+    
+    <button type="button" onclick="sendOtp()">Send OTP</button><br>
+    
+    <label for="aadhaar-otp">OTP: </label>
+    <input type="text" id="aadhaar-otp" required><br>
+    
+    <button type="submit">Signup</button>
+</form>
+
+<h2>Login Form</h2>
+<form id="login-form">
+    <label for="login-email">Email: </label>
+    <input type="email" id="login-email" required><br>
+    
+    <label for="login-password">Password: </label>
+    <input type="password" id="login-password" required><br>
+    
+    <label for="login-otp">OTP: </label>
+    <input type="text" id="login-otp" required><br>
+    
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    // Function to send OTP to Aadhaar
+    async function sendOtp() {
+        const aadhaar = document.getElementById("aadhaar").value;
+        
+        if (!aadhaar) {
+            alert("Please enter your Aadhaar number.");
+            return;
+        }
+
+        const response = await fetch('/send-aadhaar-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ aadhaar: aadhaar })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    }
+
+    // Submit Signup Form
+    document.getElementById('signup-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('aadhaar', document.getElementById("aadhaar").value);
+        formData.append('full-name', document.getElementById("full-name").value);
+        formData.append('email', document.getElementById("email").value);
+        formData.append('phone', document.getElementById("phone").value);
+        formData.append('address', document.getElementById("address").value);
+        formData.append('country', document.getElementById("country").value);
+        formData.append('password', document.getElementById("password").value);
+        formData.append('profile-picture', document.getElementById("profile-picture").files[0]);
+        formData.append('aadhaar-otp', document.getElementById("aadhaar-otp").value);
+
+        const response = await fetch('/signup', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    });
+
+    // Submit Login Form
+    document.getElementById('login-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const response = await fetch('/login', {
+            method: 'POST',
+            body: new URLSearchParams({
+                'login-email': document.getElementById('login-email').value,
+                'login-password': document.getElementById('login-password').value,
+                'login-otp': document.getElementById('login-otp').value
+            })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+        if (data.token) {
+            // Store token in localStorage or sessionStorage
+            localStorage.setItem('auth-token', data.token);
+            alert("Logged in successfully!");
+        }
+    });
+</script>
+
+</body>
+</html>
