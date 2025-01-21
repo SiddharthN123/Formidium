@@ -19,9 +19,9 @@ app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-key'
 
 # Twilio Configuration
 
-app.config['TWILIO_ACCOUNT_SID'] = 'AC85eef1fa53ecf27782d5af4250e8dd64'  # Your Twilio Account SID
-app.config['TWILIO_AUTH_TOKEN'] = 'fc6427490856f344dd89e9d95bbc0a0c'    # Your Twilio Auth Token
-app.config['TWILIO_PHONE_NUMBER'] = '8448505255'  # Your Twilio phone number
+app.config['TWILIO_ACCOUNT_SID'] = ''  # Your Twilio Account SID
+app.config['TWILIO_AUTH_TOKEN'] = ''    # Your Twilio Auth Token
+app.config['TWILIO_PHONE_NUMBER'] = ''  # Your Twilio phone number
 
 
 db = SQLAlchemy(app)
